@@ -43,19 +43,25 @@ const getTdStyle = (code) => {
 const getTdText = (code) => {
   console.log("getTdtext");
   switch (code) {
+    // 아무것도 아닌칸
     case CODE.NORMAL:
       return "";
+    // 마인
     case CODE.MINE:
       return "X";
+    // 마인 클릭
     case CODE.CLICKED_MINE:
       return "펑";
+    // 깃발 (오른 클릭 1회)
     case CODE.FLAG_MINE:
     case CODE.FLAG:
       return "!";
+    // 물음표 (오른 클릭 2회)
     case CODE.QUESTION_MINE:
     case CODE.QUESTION:
       return "?";
     default:
+      // code넣어서 지뢰갯수 표시되게, 0인 경우 ""로 안나오게
       return code || "";
   }
 };
@@ -64,13 +70,19 @@ const Td = memo(({ rowIndex, cellIndex }) => {
   const { tableData, dispatch, halted } = useContext(TableContext);
 
   const onClickTd = useCallback(() => {
+    // 게임이 멈췄으면 아무일도 하지 않도록
     if (halted) {
       return;
     }
+    // 클릭했을 때 상태 (지뢰인곳 아닌곳)
     switch (tableData[rowIndex][cellIndex]) {
+      // 클릭 안되는 칸 들
+      // 이미 연 칸
       case CODE.OPENED:
+      // 깃발 칸
       case CODE.FLAG_MINE:
       case CODE.FLAG:
+      // 물음표칸
       case CODE.QUESTION_MINE:
       case CODE.QUESTION:
         return;
@@ -83,8 +95,10 @@ const Td = memo(({ rowIndex, cellIndex }) => {
       default:
         return;
     }
+    // 바뀌는건 항상 여기
   }, [tableData[rowIndex][cellIndex], halted]);
 
+  // 오른 마우스 클릭
   const onRightClickTd = useCallback(
     (e) => {
       e.preventDefault();
