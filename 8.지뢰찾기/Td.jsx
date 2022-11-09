@@ -1,13 +1,5 @@
 import React, { useContext, useCallback, useMemo, memo } from "react";
-import {
-  CLICK_MINE,
-  CODE,
-  FLAG_CELL,
-  NORMALIZE_CELL,
-  OPEN_CELL,
-  QUESTION_CELL,
-  TableContext,
-} from "./MineSearch";
+import { CLICK_MINE, CODE, FLAG_CELL, NORMALIZE_CELL, OPEN_CELL, QUESTION_CELL, TableContext } from "./MineSearch";
 
 // 색 변경하기
 const getTdStyle = (code) => {
@@ -126,24 +118,25 @@ const Td = memo(({ rowIndex, cellIndex }) => {
   );
 
   console.log("td rendered");
+  // context API를 사용하면 자동 렌더링 됨
+  // -> return 부분을 memo
+  // 다 리렌더링 되는 것 같지만 실제로는 누르는 부분만 리렌더링 되도록 해야함
 
-  return (
-    <RealTd
-      onClickTd={onClickTd}
-      onRightClickTd={onRightClickTd}
-      data={tableData[rowIndex][cellIndex]}
-    />
-  );
+  // 방법 1
+  // return useMemo(() => {
+  //   <td style={getTdStyle(data)} onClick={onClickTd} onContextMenu={onRightClickTd}>
+  //   {getTdText(tableData[rowIndex][cellIndex])}</td>
+  // }, [tableData[rowIndex][cellIndex]]);
+
+  // 방법2 (컴포넌트를 2개로 분리하는 방법)
+  return <RealTd onClickTd={onClickTd} onRightClickTd={onRightClickTd} data={tableData[rowIndex][cellIndex]} />;
 });
 
+// 함수 자체는 여러번 실행 되더라도 이 부분은 클릭했을 때만 실행되게
 const RealTd = memo(({ onClickTd, onRightClickTd, data }) => {
   console.log("real td rendered");
   return (
-    <td
-      style={getTdStyle(data)}
-      onClick={onClickTd}
-      onContextMenu={onRightClickTd}
-    >
+    <td style={getTdStyle(data)} onClick={onClickTd} onContextMenu={onRightClickTd}>
       {getTdText(data)}
     </td>
   );
